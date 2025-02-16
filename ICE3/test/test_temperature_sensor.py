@@ -10,6 +10,9 @@
 import unittest
 
 from ICE3.src import temperature_sensor
+from ICE3.src.temperature_sensor import menu_options
 
 class TestTemperatureSensor(unittest.TestCase):
-    def test_menu_option_low(self):
+
+    def test_menu_low(self):
+        self.assertEqual()
