@@ -17,33 +17,69 @@ class TestTemperatureSensor(unittest.TestCase):
     def test_clear_list(self):
         clear_list()
 
+    ##### BOUNDARY VALUE ANALYSIS #####
 
-    # Tests for temp input
-    def test_valid_temps(self):
+    # Test minimum boundary
+    def test_min_boundary(self):
         self.assertEqual(add_temp("-50"), "Added to list.")
-        self.assertEqual(add_temp("150"), "Added to list.")
-        self.assertEqual(add_temp("20"), "Added to list.")
 
+    # Test maximum boundary
+    def test_max_boundary(self):
+        self.assertEqual(add_temp("150"), "Added to list.")
+
+    # Tests near boundary
+    def test_near_boundary(self):
+        self.assertEqual(add_temp("-49"), "Added to list.")
+        self.assertEqual(add_temp("149"), "Added to list.")
+
+
+    #### ROBUSTNESS TESTING ####
+
+    # Test mixed valid and invalid inputs
+    def test_mixed_valid(self):
+        self.assertEqual(add_temp("-60"), "Temperature must be between -50 and 150 degrees Celsius.")
+        self.assertEqual(add_temp("20"), "Added to list.")
+        self.assertEqual(add_temp("160"), "Temperature must be between -50 and 150 degrees Celsius.")
+
+    # Test inputting letters
     def test_alpha_temps(self):
         self.assertEqual(add_temp("Test string"), "Please enter a valid number.")
 
-    def test_temp_too_low(self):
-        self.assertEqual(add_temp("-51"), "Temperature must be between -50 and 150 degrees Celsius.")
-        self.assertEqual(add_temp("-500000"), "Temperature must be between -50 and 150 degrees Celsius.")
+    # Test special characters
+    def test_special_char(self):
+        self.assertEqual(add_temp("%"), "Please enter a valid number.")
+        self.assertEqual(add_temp("/"), "Please enter a valid number.")
 
-    def test_temp_too_high(self):
-        self.assertEqual(add_temp("151"), "Temperature must be between -50 and 150 degrees Celsius.")
-        self.assertEqual(add_temp("500000"), "Temperature must be between -50 and 150 degrees Celsius.")
+
+    ##### SPECIAL SCENARIOS #####
+
+    # Test very large negative values
+    def test_very_low(self):
+        self.assertEqual(add_temp("-100000000000"), "Temperature must be between -50 and 150 degrees Celsius.")
+        self.assertEqual(add_temp("-2**31"), "Please enter a valid number.")
+
+    # Test very large positive values
+    def test_very_high(self):
+        self.assertEqual(add_temp("100000000000"), "Temperature must be between -50 and 150 degrees Celsius.")
+        self.assertEqual(add_temp("2**31 - 1"), "Please enter a valid number.")
 
     def test_null_temp(self):
         self.assertEqual(add_temp(""), "Input cannot be blank.")
 
 
-    # Tests for calculations
-    def calculate_empty_list(self):
+    ##### SPECIAL SCENARIOS #####
+
+    # Test calculating an empty list
+    def test_calculate_empty_list(self):
         self.assertEqual(calculate(), "List is blank. Unable to calculate.")
 
-    def calculate_valid_temps(self):
+    # Test just outside of the boundary
+    def test_out_of_bounds(self):
+        self.assertEqual(add_temp("-51"), "Temperature must be between -50 and 150 degrees Celsius.")
+        self.assertEqual(add_temp("151"), "Temperature must be between -50 and 150 degrees Celsius.")
+
+    # Test valid temperatures to see that math is correct
+    def test_calculate_valid_temps(self):
         add_temp("150")
         add_temp("-50")
         add_temp("50")
