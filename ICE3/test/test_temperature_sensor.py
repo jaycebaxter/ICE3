@@ -6,7 +6,6 @@
 #                       and special cases for temperature_sensor
 ###################################################################
 
-
 import unittest
 
 from ICE3.src import temperature_sensor
